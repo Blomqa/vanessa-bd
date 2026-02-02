@@ -24,7 +24,6 @@
     .card{ position:relative; text-align:center; background:var(--card); backdrop-filter: blur(6px);
       box-shadow: 0 24px 60px rgba(0,0,0,0.12); border-radius:24px; padding:26px 20px 16px; }
     h1{ margin:6px 8px 10px; font-size:clamp(22px, 4.6vw, 36px); line-height:1.15; }
-    .celebrate{ display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin:6px 0 12px; font-size:clamp(22px, 5vw, 36px); }
 
     .choices{ position:relative; margin:8px auto 2px; display:flex; justify-content:center; gap:12px; min-height:84px; width:100%; max-width:520px; }
     button{ border:0; border-radius:999px; padding:16px 26px; font-weight:800; cursor:pointer; font-size:clamp(16px, 2.8vw, 20px); transition:transform .08s ease, box-shadow .2s ease, background .2s ease, color .2s ease; box-shadow:0 10px 20px rgba(0,0,0,.12); touch-action:manipulation; user-select:none; }
@@ -52,20 +51,22 @@
     .confetti i{ position:absolute; will-change:transform, opacity; animation:pop 1200ms ease-out forwards; font-style:normal; font-size:clamp(18px, 3.6vw, 28px); }
     @keyframes pop{ 0%{ transform: translate(var(--x,0), var(--y,0)) scale(.6) rotate(0); opacity:1;} 100%{ transform: translate(var(--xEnd,0), var(--yEnd,-240px)) scale(1.1) rotate(340deg); opacity:0;} }
 
-    /* Fixed positions around the card */
+    /* Fixed, labeled spots around card (no randomness, no motion) */
     .ring { position:fixed; inset:0; z-index:2; pointer-events:none; }
-    .ring img{ position:absolute; width: clamp(88px, 15vw, 180px); height:auto; border-radius:18px; box-shadow:0 10px 24px rgba(0,0,0,.14); object-fit:cover; opacity:0.98; }
-    @media (max-width: 480px){ .ring img{ width: clamp(70px, 28vw, 140px);} }
+    .ring img{ position:absolute; width: clamp(92px, 15vw, 190px); height:auto; border-radius:18px; box-shadow:0 10px 24px rgba(0,0,0,.14); object-fit:cover; opacity:0.98; }
+
+    /* Optional smaller on very small screens */
+    @media (max-width: 520px){ .ring img{ width: clamp(80px, 26vw, 150px);} }
   </style>
 </head>
 <body>
   <div class="hearts" aria-hidden="true"></div>
-  <!-- Photos placed around the card (fixed spots) -->
+  <!-- Fixed photo ring around the card -->
   <div class="ring" id="ring" aria-hidden="true"></div>
 
   <main class="wrap" role="main">
     <section class="card" aria-label="Invitation" id="card">
-      <div class="celebrate" aria-hidden="true">🎉 🎂 🎈 ✨ 🎊</div>
+      <div aria-hidden="true">🎉 🎂 🎈 ✨ 🎊</div>
       <h1>Vanessas Birthday Surprise - press YES if you want to receive it!</h1>
       <div class="choices" id="choiceArea">
         <button class="btn-yes" id="yesBtn" aria-label="Yes">YES 💖</button>
@@ -143,31 +144,33 @@
       }
     }
 
-    // ----- Deterministic ring placement (no randomness, consistent on refresh) -----
-    function placeFixedRing(){
+    // ----- Fixed labeled spots around the card (consistent on every refresh) -----
+    function placeFixed(){
       const files = ['images/V1.jpg','images/V2.jpg','images/V3.jpg','images/V4.jpg','images/V5.jpg','images/V6.jpg','images/V7.jpg'];
       const ring = document.getElementById('ring'); ring.innerHTML = '';
       const card = document.getElementById('card'); const r = card.getBoundingClientRect();
 
-      // Card center
+      // card center
       const cx = r.left + r.width/2; const cy = r.top + r.height/2;
 
-      // Ellipse radii around the card (so images sit in the pink area around the grey box)
-      const rx = r.width/2 + 180; // horizontal radius from card center
-      const ry = r.height/2 + 150; // vertical radius
-
-      // Predefined angles (degrees) for each image, clockwise starting at top
-      const angles = [ -90, -40, -10, 20, 55, 110, 160 ];
+      // choose fixed offsets around the card (top, top-right, right, bottom-right, bottom, bottom-left, left)
+      const spots = [
+        {dx: 0,                 dy: -(r.height/2 + 160)}, // top
+        {dx:  (r.width/2 + 180), dy: -(r.height/2 + 40)}, // top-right
+        {dx:  (r.width/2 + 220), dy:   0},               // right
+        {dx:  (r.width/2 + 160), dy:  (r.height/2 + 80)}, // bottom-right
+        {dx:  0,                 dy:  (r.height/2 + 170)}, // bottom
+        {dx: -(r.width/2 + 180), dy:  (r.height/2 + 40)}, // bottom-left
+        {dx: -(r.width/2 + 220), dy:   0},               // left
+      ];
 
       files.forEach((src, i)=>{
         const img = document.createElement('img'); img.src = src; img.alt='';
-        const deg = angles[i % angles.length]; const rad = deg * Math.PI/180;
-        // Position on ellipse
-        const x = cx + rx * Math.cos(rad) - 90; // subtract half approx image width
-        const y = cy + ry * Math.sin(rad) - 70; // subtract half approx image height
-        img.style.left = Math.round(x) + 'px'; img.style.top  = Math.round(y) + 'px';
-        // Light tilt depending on quadrant
-        const rot = (deg/12).toFixed(1); img.style.transform = `rotate(${rot}deg)`;
+        const spot = spots[i % spots.length];
+        const x = cx + spot.dx; const y = cy + spot.dy;
+        // subtract approx half image size to center
+        img.style.left = Math.round(x - 95) + 'px';
+        img.style.top  = Math.round(y - 75) + 'px';
         ring.appendChild(img);
       });
     }
@@ -193,9 +196,8 @@
       const a = document.createElement('a'); a.href = url; a.download = 'Vanessa-Surprise.ics'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
     });
 
-    // Place ring once layout is ready and on resize (deterministic)
-    window.addEventListener('load', placeFixedRing);
-    window.addEventListener('resize', ()=>{ setTimeout(placeFixedRing, 150); });
+    window.addEventListener('load', placeFixed);
+    window.addEventListener('resize', ()=>{ setTimeout(placeFixed, 150); });
   </script>
 </body>
 </html>
