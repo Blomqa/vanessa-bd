@@ -15,7 +15,6 @@
       --grey:#9aa0a6;
       --dark:#3b2c35;
       --accent:#ff8fb3;
-      --yes:#ff4da6;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -23,35 +22,22 @@
       margin:0;
       font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans";
       color:var(--dark);
-      display:grid;
-      place-items:center;
+      display:grid; place-items:center; overflow:hidden;
       background:
         radial-gradient(circle at 15% 10%, #fff1f6 0 25%, transparent 26%),
         radial-gradient(circle at 85% 20%, #ffe9f1 0 20%, transparent 21%),
         linear-gradient(135deg, var(--bg1), var(--bg2));
-      overflow:hidden;
     }
 
-    .wrap{position:relative; z-index:1; width:min(760px, 94vw);} 
+    .wrap{position:relative; z-index:2; width:min(760px, 94vw);} 
     .card{
-      position:relative;
-      background:var(--card);
+      position:relative; text-align:center; background:var(--card);
       backdrop-filter: blur(6px);
       box-shadow: 0 24px 60px rgba(0,0,0,0.12);
-      border-radius:24px;
-      padding:26px 20px 16px;
-      text-align:center;
+      border-radius:24px; padding:26px 20px 16px;
     }
-    h1{
-      margin:6px 8px 10px;
-      font-size:clamp(22px, 4.6vw, 36px);
-      line-height:1.15;
-    }
-    .celebrate{
-      display:flex; justify-content:center; gap:10px; flex-wrap:wrap;
-      margin:6px 0 12px;
-      font-size:clamp(22px, 5vw, 36px);
-    }
+    h1{ margin:6px 8px 10px; font-size:clamp(22px, 4.6vw, 36px); line-height:1.15; }
+    .celebrate{ display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin:6px 0 12px; font-size:clamp(22px, 5vw, 36px); }
     .celebrate .emo{ display:inline-block; filter: drop-shadow(0 8px 10px rgba(0,0,0,.08)); }
     .celebrate .bounce{ animation:bounce 1.6s ease-in-out infinite; }
     .celebrate .float { animation:float 3.6s ease-in-out infinite; }
@@ -60,30 +46,11 @@
     @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
     @keyframes spin  { 0%{transform:rotate(0)} 100%{transform:rotate(360deg)} }
 
-    .choices{
-      position:relative; margin:8px auto 2px; display:flex; justify-content:center; gap:12px;
-      min-height:84px; width:100%; max-width:520px;
-    }
-    button{
-      border:0; border-radius:999px; padding:16px 26px; font-weight:800; cursor:pointer;
-      font-size:clamp(16px, 2.8vw, 20px);
-      transition:transform .08s ease, box-shadow .2s ease, background .2s ease, color .2s ease;
-      box-shadow:0 10px 20px rgba(0,0,0,.12);
-      touch-action:manipulation;
-      user-select:none;
-    }
-    .btn-yes{
-      background:linear-gradient(135deg, var(--pink2), var(--pink));
-      color:white;
-      min-width:160px;
-    }
+    .choices{ position:relative; margin:8px auto 2px; display:flex; justify-content:center; gap:12px; min-height:84px; width:100%; max-width:520px; }
+    button{ border:0; border-radius:999px; padding:16px 26px; font-weight:800; cursor:pointer; font-size:clamp(16px, 2.8vw, 20px); transition:transform .08s ease, box-shadow .2s ease, background .2s ease, color .2s ease; box-shadow:0 10px 20px rgba(0,0,0,.12); touch-action:manipulation; user-select:none; }
+    .btn-yes{ background:linear-gradient(135deg, var(--pink2), var(--pink)); color:white; min-width:160px; }
     .btn-yes:hover{ transform:translateY(-1px); }
-    .btn-no{
-      background:#e7e9ec;
-      color:#2e3338;
-      min-width:90px;
-      position:absolute; /* it moves inside .choices */
-    }
+    .btn-no{ background:#e7e9ec; color:#2e3338; min-width:90px; position:absolute; }
 
     .foot{ margin:8px 0 0; font-size:12px; color:#6b5a63; }
 
@@ -95,7 +62,6 @@
     .panel p{ margin:6px 0 12px; font-size:clamp(16px, 2.8vw, 18px); white-space:pre-line; }
     .panel .ps{ margin-top:8px; font-size:clamp(14px, 2.6vw, 16px); color:#50434a; word-break:break-word; }
     .actions{ display:flex; justify-content:center; gap:10px; flex-wrap:wrap; }
-
     .btn-secondary{ background:#f2f2f2; color:#333; }
 
     /* floating hearts background */
@@ -107,10 +73,19 @@
     .confetti{ position:fixed; inset:0; pointer-events:none; z-index:20; }
     .confetti i{ position:absolute; will-change:transform, opacity; animation:pop 1200ms ease-out forwards; font-style:normal; font-size:clamp(18px, 3.6vw, 28px); }
     @keyframes pop{ 0%{ transform: translate(var(--x,0), var(--y,0)) scale(.6) rotate(0); opacity:1;} 100%{ transform: translate(var(--xEnd,0), var(--yEnd,-240px)) scale(1.1) rotate(340deg); opacity:0;} }
+
+    /* --- Scattered photos (stickers) --- */
+    .stickers { position: fixed; inset: 0; pointer-events: none; z-index:1; }
+    .stickers img{ position:absolute; width: clamp(90px, 18vw, 220px); height:auto; border-radius:18px; box-shadow:0 10px 24px rgba(0,0,0,.14); object-fit:cover; opacity:0.9; transform: rotate(var(--rot, 0deg)); animation: gentleFloat 8s ease-in-out infinite; will-change: transform; }
+    @keyframes gentleFloat{ 0%,100%{ transform: translate(0,0) rotate(var(--rot, 0deg)); } 50%{ transform: translate(0,-10px) rotate(calc(var(--rot, 0deg) + 1deg)); } }
+    @media (prefers-reduced-motion: reduce){ .stickers img{ animation:none !important; } }
   </style>
 </head>
 <body>
+  <!-- gentle floating hearts -->
   <div class="hearts" aria-hidden="true"></div>
+  <!-- scattered photos layer -->
+  <div class="stickers" id="stickers" aria-hidden="true"></div>
 
   <main class="wrap" role="main">
     <section class="card" aria-label="Invitation">
@@ -182,13 +157,10 @@
       const bounds = area.getBoundingClientRect();
       const btnRect = noBtn.getBoundingClientRect();
       const pad = 6;
-
       const maxLeft = Math.max(0, bounds.width - btnRect.width - pad);
       const maxTop  = Math.max(0, bounds.height - btnRect.height - pad);
-
       const left = Math.random() * maxLeft;
       const top  = Math.random() * maxTop;
-
       noBtn.style.left = left + 'px';
       noBtn.style.top  = top + 'px';
     }
@@ -247,6 +219,34 @@
       }
     }
 
+    // ---------- Scatter your uploaded photos around the page ----------
+    function scatterStickers(){
+      const files = [
+        'images/V1.jpg','images/V2.jpg','images/V3.jpg',
+        'images/V4.jpg','images/V5.jpg','images/V6.jpg','images/V7.jpg'
+      ];
+      const layer = document.getElementById('stickers');
+      if(!layer) return;
+
+      const vw = Math.max(document.documentElement.clientWidth,  window.innerWidth  || 0);
+      const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+
+      files.forEach((src)=>{
+        const img = document.createElement('img');
+        img.src = src; img.alt = '';
+        // random rotation and position
+        const rot = (Math.random()*18 - 9).toFixed(1); // -9°..9°
+        img.style.setProperty('--rot', rot + 'deg');
+        const margin = 24;
+        const left = margin + Math.random()*(vw - margin*2);
+        const top  = margin + Math.random()*(vh - margin*2);
+        img.style.left = left + 'px';
+        img.style.top  = top  + 'px';
+        img.style.animationDelay = (Math.random()*4).toFixed(2) + 's';
+        layer.appendChild(img);
+      });
+    }
+
     // YES -> show message modal + confetti
     yesBtn.addEventListener('click', ()=>{
       const msg =
@@ -296,6 +296,9 @@ END:VCALENDAR`;
       document.body.appendChild(a); a.click(); a.remove();
       URL.revokeObjectURL(url);
     });
+
+    // Kick off photo scatter after layout is ready
+    window.addEventListener('load', scatterStickers);
   </script>
 </body>
 </html>
