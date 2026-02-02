@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vanessa’s Birthday Surprise 🎉</title>
+  <meta name="description" content="A little birthday surprise for Vanessa">
+  <style>
+    :root{
+      --bg1:#ffe4ec;
+      --bg2:#ffd1dc;
+      --card:#ffffffdd;
+      --pink:#ff4da6;
+      --pink2:#ff71b8;
+      --grey:#9aa0a6;
+      --dark:#3b2c35;
+      --accent:#ff8fb3;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans";
+      color:var(--dark);
+      display:grid;
+      place-items:center;
+      background:
+        radial-gradient(circle at 15% 10%, #fff1f6 0 25%, transparent 26%),
+        radial-gradient(circle at 85% 20%, #ffe9f1 0 20%, transparent 21%),
+        linear-gradient(135deg, var(--bg1), var(--bg2));
+      overflow:hidden;
+    }
+
+    .wrap{position:relative; z-index:1; width:min(760px, 94vw);} 
+    .card{
+      position:relative;
+      background:var(--card);
+      backdrop-filter: blur(6px);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.12);
+      border-radius:24px;
+      padding:26px 20px 16px;
+      text-align:center;
+    }
+    h1{
+      margin:6px 8px 10px;
+      font-size:clamp(22px, 4.6vw, 36px);
+      line-height:1.15;
+    }
+    .celebrate{
+      display:flex; justify-content:center; gap:10px; flex-wrap:wrap;
+      margin:6px 0 12px;
+      font-size:clamp(22px, 5vw, 36px);
+    }
+    .celebrate .emo{ display:inline-block; filter: drop-shadow(0 8px 10px rgba(0,0,0,.08)); }
+    .celebrate .bounce{ animation:bounce 1.6s ease-in-out infinite; }
+    .celebrate .float { animation:float 3.6s ease-in-out infinite; }
+    .celebrate .spin  { animation:spin 4s linear infinite; }
+    @keyframes bounce{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+    @keyframes spin  { 0%{transform:rotate(0)} 100%{transform:rotate(360deg)} }
+
+    .choices{
+      position:relative; margin:8px auto 2px; display:flex; justify-content:center; gap:12px;
+      min-height:84px; width:100%; max-width:520px;
+    }
+    button{
+      border:0; border-radius:999px; padding:16px 26px; font-weight:800; cursor:pointer;
+      font-size:clamp(16px, 2.8vw, 20px);
+      transition:transform .08s ease, box-shadow .2s ease, background .2s ease, color .2s ease;
+      box-shadow:0 10px 20px rgba(0,0,0,.12);
+      touch-action:manipulation;
+      user-select:none;
+    }
+    .btn-yes{
+      background:linear-gradient(135deg, var(--pink2), var(--pink));
+      color:white;
+      min-width:160px;
+    }
+    .btn-yes:hover{ transform:translateY(-1px); }
+    .btn-no{
+      background:#e7e9ec;
+      color:#2e3338;
+      min-width:90px;
+      position:absolute; /* it moves inside .choices */
+    }
+
+    .foot{
+      margin:8px 0 0; font-size:12px; color:#6b5a63;
+    }
+
+    /* Modal */
+    .modal{
+      position:fixed; inset:0; display:none; place-items:center;
+      background:rgba(0,0,0,.35); z-index:10; padding:18px;
+    }
+    .modal.show{ display:grid; }
+    .panel{
+      background:white; border-radius:24px; padding:26px 20px; width:min(680px, 94vw);
+      text-align:center; box-shadow:0 18px 44px rgba(0,0,0,.2);
+    }
+    .panel h2{ margin:0 0 10px; font-size:clamp(22px, 4.2vw, 30px); }
+    .panel p{ margin:6px 0 16px; font-size:clamp(16px, 2.8vw, 18px); white-space:pre-line; }
+    .actions{ display:flex; justify-content:center; gap:10px; flex-wrap:wrap; }
+
+    .btn-secondary{ background:#f2f2f2; color:#333; }
+
+    /* subtle floating confetti hearts in background (decorative) */
+    .hearts{ position:fixed; inset:0; pointer-events:none; z-index:0; }
+    .hearts span{
+      position:absolute; top:110%;
+      font-size:clamp(18px, 3vw, 28px); opacity:0.85; animation:floatUp linear infinite;
+    }
+    @keyframes floatUp{
+      from{ transform:translateY(0) translateX(0) rotate(0deg); }
+      to  { transform:translateY(-220vh) translateX(-30px) rotate(360deg); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .celebrate .bounce, .celebrate .float, .celebrate .spin, .hearts span{ animation:none !important; }
+    }
+  </style>
+</head>
+<body>
+  <!-- gentle floating hearts -->
+  <div class="hearts" aria-hidden="true"></div>
+
+  <main class="wrap" role="main">
+    <section class="card" aria-label="Invitation">
+      <div class="celebrate" aria-hidden="true">
+        <span class="emo bounce">🎉</span>
+        <span class="emo float">🎂</span>
+        <span class="emo bounce">🎈</span>
+        <span class="emo spin">✨</span>
+        <span class="emo float">🎊</span>
+      </div>
+
+      <h1>Vanessas Birthday Surprise - press YES if you want to receive it!</h1>
+
+      <div class="choices" id="choiceArea">
+        <button class="btn-yes" id="yesBtn" aria-label="Yes">YES 💖</button>
+        <button class="btn-no"  id="noBtn"  aria-label="No">No</button>
+      </div>
+
+      <p class="foot">If you press no u go to hell</p>
+    </section>
+  </main>
+
+  <!-- Modal after YES -->
+  <div class="modal" id="resultModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="panel">
+      <h2 id="modalTitle">💞</h2>
+      <p id="msgText"></p>
+      <div class="actions">
+        <button class="btn-yes" id="addCal">Lägg till i kalender (.ics)</button>
+        <button class="btn-secondary" id="closeModal">Stäng</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ---------- Floating hearts background ----------
+    (function hearts(){
+      const container = document.querySelector('.hearts');
+      const emojis = ['💖','💘','💝','💗','💓','💞','💕','✨'];
+      const count = 26;
+      function spawn(){
+        const span = document.createElement('span');
+        span.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+        const left = Math.random()*100;
+        const duration = 18 + Math.random()*14; // seconds
+        const delay = Math.random()*-duration;
+        span.style.left = left + 'vw';
+        span.style.animationDuration = duration + 's';
+        span.style.animationDelay = delay + 's';
+        container.appendChild(span);
+        setTimeout(()=>span.remove(), (duration+2)*1000);
+      }
+      for(let i=0;i<count;i++) spawn();
+      setInterval(spawn, 1100);
+    })();
+
+    // ---------- Buttons & behavior ----------
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn  = document.getElementById('noBtn');
+    const area   = document.getElementById('choiceArea');
+
+    // Place the No button absolutely and keep it moving
+    noBtn.style.position = 'absolute';
+
+    function randomPosition(){
+      const bounds = area.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+      const pad = 6;
+
+      const maxLeft = Math.max(0, bounds.width - btnRect.width - pad);
+      const maxTop  = Math.max(0, bounds.height - btnRect.height - pad);
+
+      const left = Math.random() * maxLeft;
+      const top  = Math.random() * maxTop;
+
+      noBtn.style.left = left + 'px';
+      noBtn.style.top  = top + 'px';
+    }
+
+    // Move constantly every ~1.2s
+    let mover = setInterval(randomPosition, 1200);
+    // Also dodge when hovered or tapped
+    ['mouseenter','mouseover','touchstart','click'].forEach(evt => {
+      noBtn.addEventListener(evt, (e)=>{ e.preventDefault(); randomPosition(); }, {passive:false});
+    });
+
+    // Keep No away from the cursor (little "proximity" dodge)
+    document.addEventListener('mousemove', (e)=>{
+      const rect = noBtn.getBoundingClientRect();
+      const cx = rect.left + rect.width/2;
+      const cy = rect.top  + rect.height/2;
+      const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
+      if(dist < 120){ randomPosition(); }
+    });
+
+    // Ensure first layout
+    window.addEventListener('load', randomPosition);
+    window.addEventListener('resize', randomPosition);
+
+    // YES -> show message modal
+    yesBtn.addEventListener('click', ()=>{
+      // Swedish message with a heart after the phrase
+      const msg =
+`Kära älskade Vanessa, Vincent, Lillis, Puppe, HupuLupu – Grattis på födelsedagen ❤️!
+Din gåva väntar på dig 14.2.2026 – boka kalendern från och med 17 (ish) framåt →.
+Puss och kram <3`;
+
+      document.getElementById('msgText').textContent = msg;
+      document.getElementById('resultModal').classList.add('show');
+    });
+
+    // Modal buttons
+    document.getElementById('closeModal').addEventListener('click', ()=>{
+      document.getElementById('resultModal').classList.remove('show');
+    });
+
+    // Optional: Add to calendar (.ics) for 14 Feb 2026 starting ~17:00
+    document.getElementById('addCal').addEventListener('click', ()=>{
+      const title = "Födelsedagsöverraskning: Date Night";
+      const description = "Din gåva väntar på dig – från Janne 💖";
+      // Local (floating) times: 17:00–22:00 on 2026-02-14
+      const start = "20260214T170000";
+      const end   = "20260214T220000";
+      const dtstamp = new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z');
+      const uid = Date.now()+"@vanessa-surprise";
+
+      const ics =
+`BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Vanessa Surprise//EN
+BEGIN:VEVENT
+UID:${uid}
+DTSTAMP:${dtstamp}
+DTSTART:${start}
+DTEND:${end}
+SUMMARY:${title}
+DESCRIPTION:${description}
+END:VEVENT
+END:VCALENDAR`;
+
+      const blob = new Blob([ics], {type:'text/calendar'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'Vanessa-Surprise.ics';
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+    });
+  </script>
+</body>
+</html>
